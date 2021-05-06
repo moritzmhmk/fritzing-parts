@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" width="1.2in" height="1.2in" viewBox="0 0 30.48 30.48">
+    <g id="schematic">
+      <rect id="connector0pin" />
+      <rect id="connector1pin" />
+      <rect id="connector2pin" />
+      <rect id="connector3pin" />
+      <rect id="connector4pin" />
+    </g>
+</svg>
