@@ -59,8 +59,8 @@
         </pcbView>
       </views>
     </connector>
-    <connector type="male" id="connector1" name="Trig/TX" >
-      <description>Trig/TX</description>
+    <connector type="male" id="connector1" name="Trig/Tx" >
+      <description>Trig/Tx</description>
       <views>
         <breadboardView>
            <p svgId="connector1pin" layer="breadboard" />
@@ -74,8 +74,8 @@
         </pcbView>
       </views>
     </connector>
-    <connector type="male" id="connector2" name="Echo/RX" >
-      <description>Echo/RX</description>
+    <connector type="male" id="connector2" name="Echo/Rx" >
+      <description>Echo/Rx</description>
       <views>
         <breadboardView>
            <p svgId="connector2pin" layer="breadboard" />
