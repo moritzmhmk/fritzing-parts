@@ -111,7 +111,7 @@
            <p svgId="connector4pin" layer="breadboard" />
         </breadboardView>
         <schematicView>
-          <p svgId="connector4pin" layer="schematic" terminalId="connector4terminal" hybrid="yes" />
+          <p svgId="connector4pin" layer="schematic" hybrid="yes" />
         </schematicView>
         <pcbView>
           <p svgId="connector4pad" layer="copper0" />
