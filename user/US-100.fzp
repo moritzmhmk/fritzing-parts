@@ -59,7 +59,7 @@
         </pcbView>
       </views>
     </connector>
-    <connector type="male" id="connector1" name="Trig/Tx" >
+    <connector type="male" id="connector1" name="TRIG" >
       <description>Trig/Tx</description>
       <views>
         <breadboardView>
@@ -74,7 +74,7 @@
         </pcbView>
       </views>
     </connector>
-    <connector type="male" id="connector2" name="Echo/Rx" >
+    <connector type="male" id="connector2" name="ECHO" >
       <description>Echo/Rx</description>
       <views>
         <breadboardView>
