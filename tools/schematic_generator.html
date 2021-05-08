@@ -237,12 +237,8 @@
           bottom: pins.find((pin) => pin.side === "bottom") ? 105 : 5,
         };
 
-        const viewBox = {
-          x: -margin.left,
-          y: -margin.top,
-          width: width * 1000 + margin.left + margin.right,
-          height: height * 1000 + margin.top + margin.bottom,
-        };
+        const viewWidth = width * 1000 + margin.left + margin.right;
+        const viewHeight = height * 1000 + margin.top + margin.bottom;
 
         return (
           <div>
@@ -326,9 +322,9 @@
                 xmlns="http://www.w3.org/2000/svg"
                 version="1.2"
                 baseProfile="tiny"
-                width={`${viewBox.width / 1000}in`}
-                height={`${viewBox.height / 1000}in`}
-                viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
+                width={`${viewWidth / 1000}in`}
+                height={`${viewHeight / 1000}in`}
+                viewBox={`0 0 ${viewWidth} ${viewHeight}`}
               >
                 <g
                   id="schematic"
@@ -337,6 +333,7 @@
                   strokeWidth="10"
                   strokeLinecap="round"
                   fontFamily="DroidSans"
+                  transform={`translate(${margin.left}, ${margin.top})`}
                 >
                   <rect
                     x="0"
