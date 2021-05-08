@@ -4,13 +4,64 @@
     <meta charset="UTF-8" />
     <title>Schematic Generator</title>
     <style type="text/css">
+      body {
+        font-family: "DroidSans", "Helvetica", "Arial", "sans serif";
+        background-color: #d9d9d9;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+      h1 {
+        font-size: 25px;
+        color: #d63222;
+        text-decoration: underline;
+      }
+      .section {
+        margin: 10px 0px;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .section .title {
+        color: #d63222;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .inputline {
+        display: flex;
+        padding: 2px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        border-top: 1px solid #b1b1b1;
+      }
+      label {
+        width: 80px;
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+      input {
+        width: 40px;
+        flex-grow: 1;
+        flex-shrink: 1;
+        border: 0;
+        padding: 3px 5px;
+        margin: 0px 5px;
+      }
       svg {
-        zoom: 5;
-        border: 1px solid hsl(5, 73%, 49%);
+        align-self: center;
+        zoom: 2;
+        background: #fff;
+      }
+      pre {
+        align-self: center;
+        white-space: pre-wrap;
       }
     </style>
   </head>
   <body>
+    <h1>Schematic Generator</h1>
     <div id="root" />
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
@@ -59,17 +110,17 @@
             '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + s
           );
         });
-        const [label, setLabel] = useState("Label");
-        const [width, setWidth] = useState(5);
-        const [height, setHeight] = useState(3);
+        const [label, setLabel] = useState("Part Label");
+        const [width, setWidth] = useState(0.5);
+        const [height, setHeight] = useState(0.3);
         const [pins, setPins] = useState([
-          { label: "VCC", side: "left", position: 1 },
-          { label: "GND", side: "left", position: 2 },
+          { label: "VCC", side: "left", position: 0.1 },
+          { label: "GND", side: "left", position: 0.2 },
         ]);
 
         const pinInputNodes = pins.map(({ label, side, position }, i) => (
-          <div>
-            {i + 1}
+          <div className="inputline">
+            <label>Pin {i + 1}</label>
             <input
               type="text"
               value={label}
@@ -97,17 +148,21 @@
               <option value="bottom">bottom</option>
               <option value="hidden">hidden</option>
             </select>
-            <input
-              type="number"
-              value={position}
-              onChange={(e) =>
-                setPins((pins) => [
-                  ...pins.slice(0, i),
-                  { ...pins[i], position: Math.max(1, e.target.value) },
-                  ...pins.slice(i + 1),
-                ])
-              }
-            />
+            <div className="inputgroup">
+              <input
+                type="number"
+                value={position}
+                step=".1"
+                onChange={(e) =>
+                  setPins((pins) => [
+                    ...pins.slice(0, i),
+                    { ...pins[i], position: Math.max(0.1, e.target.value) },
+                    ...pins.slice(i + 1),
+                  ])
+                }
+              />
+              in
+            </div>
           </div>
         ));
 
@@ -134,80 +189,129 @@
         const viewBox = {
           x: -margin.left,
           y: -margin.top,
-          width: width * 100 + margin.left + margin.right,
-          height: height * 100 + margin.top + margin.bottom,
+          width: width * 1000 + margin.left + margin.right,
+          height: height * 1000 + margin.top + margin.bottom,
         };
 
         return (
           <div>
-            <input
-              type="text"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-            />
-            <br />
-            Size:
-            <input
-              type="number"
-              value={width}
-              onChange={(e) => setWidth(Math.max(1, e.target.value))}
-            />
-            x
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(Math.max(1, e.target.value))}
-            />
-            <br />
-            {pinInputNodes}
-            <input
-              type="button"
-              value="+"
-              onClick={() =>
-                setPins((pins) => [
-                  ...pins,
-                  { side: "left", position: 2, label: "NEW" },
-                ])
-              }
-            />
-            <br />
-            <svg
-              ref={svgUpdate}
-              xmlns="http://www.w3.org/2000/svg"
-              version="1.2"
-              baseProfile="tiny"
-              width={`${viewBox.width / 1000}in`}
-              height={`${viewBox.height / 1000}in`}
-              viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
-            >
-              <g
-                id="schematic"
-                fill="none"
-                stroke="none"
-                strokeWidth="10"
-                strokeLinecap="round"
-                fontFamily="DroidSans"
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  width={width * 100}
-                  height={height * 100}
-                  stroke="#000"
+            <div className="section">
+              <div className="title">Part Properties</div>
+              <div className="inputline">
+                <label htmlFor="label">Label</label>
+                <input
+                  id="label"
+                  type="text"
+                  value={label}
+                  onChange={(e) => setLabel(e.target.value)}
                 />
-                <text
-                  x={(width * 100) / 2}
-                  y={(height * 100) / 2 + 20}
-                  fontSize="59"
-                  fill="#000"
-                  textAnchor="middle"
+              </div>
+              <div className="inputline">
+                <label htmlFor="width">Size</label>
+                <div className="inputgroup">
+                  <input
+                    id="width"
+                    type="number"
+                    value={width}
+                    step=".1"
+                    onChange={(e) => setWidth(Math.max(0.1, e.target.value))}
+                  />
+                  x
+                  <input
+                    id="height"
+                    type="number"
+                    value={height}
+                    step=".1"
+                    onChange={(e) => setHeight(Math.max(0.1, e.target.value))}
+                  />
+                  in
+                </div>
+              </div>
+            </div>
+            <div className="section">
+              <div className="title">Pins</div>
+              {pinInputNodes}
+              <div className="inputline">
+                <input
+                  type="button"
+                  value="+"
+                  onClick={() =>
+                    setPins((pins) => {
+                      let newPin = {
+                        side: pins[pins.length - 1].side || "left",
+                        position: pins[pins.length - 1].position + 0.1,
+                        label: "NEW",
+                      };
+                      if (
+                        (newPin.side === "left" || newPin.side === "right") &&
+                        newPin.position > height - 0.1
+                      ) {
+                        setHeight(newPin.position + 0.1);
+                      }
+                      if (
+                        (newPin.side === "top" || newPin.side === "bottom") &&
+                        newPin.position > width - 0.1
+                      ) {
+                        setWidth(newPin.position + 0.1);
+                      }
+                      return [...pins, newPin];
+                    })
+                  }
+                />
+                <input
+                  type="button"
+                  value="-"
+                  onClick={() =>
+                    setPins([...pins.slice(0, Math.max(pins.length - 1, 1))])
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="section">
+              <div className="title">Preview</div>
+              <svg
+                ref={svgUpdate}
+                xmlns="http://www.w3.org/2000/svg"
+                version="1.2"
+                baseProfile="tiny"
+                width={`${viewBox.width / 1000}in`}
+                height={`${viewBox.height / 1000}in`}
+                viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
+              >
+                <g
+                  id="schematic"
+                  fill="none"
+                  stroke="none"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  fontFamily="DroidSans"
                 >
-                  {label}
-                </text>
-                {pinSVGNodes}
-              </g>
-            </svg>
-            <pre>{svgString}</pre>
+                  <rect
+                    x="0"
+                    y="0"
+                    width={width * 1000}
+                    height={height * 1000}
+                    stroke="#000"
+                  />
+                  <text
+                    x={(width * 1000) / 2}
+                    y={(height * 1000) / 2 + 20}
+                    fontSize="59"
+                    fill="#000"
+                    textAnchor="middle"
+                  >
+                    {label}
+                  </text>
+                  {pinSVGNodes}
+                </g>
+              </svg>
+            </div>
+
+            <div className="section">
+              <div className="title">XML</div>
+              <pre>{svgString}</pre>
+            </div>
           </div>
         );
       };
@@ -244,7 +348,7 @@
           invert = true;
         }
         return (
-          <g transform={`translate(${x * 100},${y * 100})`}>
+          <g transform={`translate(${x * 1000},${y * 1000})`}>
             <path
               d={`m0,0 ${horizontal ? "h" : "v"}${invert ? 100 : -100}`}
               id={`connector${number}pin`}
