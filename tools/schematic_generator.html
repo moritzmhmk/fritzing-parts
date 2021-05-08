@@ -77,7 +77,47 @@
       });
     </script>
     <script type="text/babel" data-presets="my-preset">
-      const { useState, useCallback } = React;
+      const { useState, useCallback, useEffect } = React;
+
+      const parseQS = (qs) =>
+        Object.fromEntries(qs.split("&").map((kv) => kv.split(/=(.+)/)));
+
+      function getStateFromQuery(query) {
+        const qs = parseQS(query);
+        let pins = [
+          { label: "VCC", side: "left", position: 0.1 },
+          { label: "GND", side: "left", position: 0.2 },
+        ];
+        const pinLabel = qs.pinLabel && qs.pinLabel.split(",");
+        const pinSide = qs.pinSide && qs.pinSide.split(",");
+        const pinPosition = qs.pinPosition && qs.pinPosition.split(",");
+
+        if (pinLabel) {
+          pins = pinLabel.map((label, i) => ({
+            label: label,
+            side: (pinSide && pinSide[i]) || "left",
+            position: (pinPosition && pinPosition[i]) || "0.1",
+          }));
+        }
+        return {
+          label: qs.label || "Part Label",
+          width: qs.width || 0.5,
+          height: qs.height || 0.3,
+          pins: pins,
+        };
+      }
+
+      function getQueryFromState(state) {
+        return `label=${state.label}&width=${state.width}&height=${
+          state.height
+        }&pinLabel=${state.pins
+          .map((p) => p.label)
+          .join(",")}&pinSide=${state.pins
+          .map((p) => p.side)
+          .join(",")}&pinPosition=${state.pins
+          .map((p) => p.position)
+          .join(",")}`;
+      }
 
       const App = () => {
         const [svgString, setSvgString] = useState("");
@@ -105,18 +145,29 @@
           xsltProcessor.importStylesheet(xsltDoc);
           const resultDoc = xsltProcessor.transformToDocument(svgNode);
           const s = new XMLSerializer().serializeToString(resultDoc);
-          console.log(s);
           setSvgString(
             '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + s
           );
         });
-        const [label, setLabel] = useState("Part Label");
-        const [width, setWidth] = useState(0.5);
-        const [height, setHeight] = useState(0.3);
-        const [pins, setPins] = useState([
-          { label: "VCC", side: "left", position: 0.1 },
-          { label: "GND", side: "left", position: 0.2 },
-        ]);
+        const defaultState = getStateFromQuery(
+          window.location.search.substring(1)
+        );
+        const [label, setLabel] = useState(defaultState.label);
+        const [width, setWidth] = useState(defaultState.width);
+        const [height, setHeight] = useState(defaultState.height);
+        const [pins, setPins] = useState(defaultState.pins);
+
+        useEffect(() => {
+          let query = getQueryFromState({
+            label: label,
+            width: width,
+            height: height,
+            pins: pins,
+          });
+          if (query === window.location.search.substring(1)) return;
+          const url = `${location.protocol}//${location.host}${location.pathname}?${query}`;
+          window.history.pushState({}, document.title, url);
+        }, [label, width, height, pins]);
 
         const pinInputNodes = pins.map(({ label, side, position }, i) => (
           <div className="inputline">
