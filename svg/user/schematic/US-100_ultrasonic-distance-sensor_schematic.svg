@@ -147,6 +147,14 @@
         4
       </text>
     </g>
-    <rect id="connector4pin" fill="none" stroke="none" />
+    <rect
+      x="-1000"
+      y="-1000"
+      width="1"
+      height="1"
+      id="connector4pin"
+      fill="none"
+      stroke="none"
+    />
   </g>
 </svg>
