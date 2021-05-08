@@ -2,7 +2,7 @@
 
 ## Schematic Generator
 
-Can be used to generate simple (i.e. rectangular) svgs for schematic view ([open tool via rawgit](https://ghcdn.rawgit.org/moritzmhmk/fritzing-parts/react/tools/schematic_generator.html)).
+Can be used to generate simple (i.e. rectangular) svgs for schematic view ([open tool via rawgit](https://ghcdn.rawgit.org/moritzmhmk/fritzing-parts/main/tools/schematic_generator.html)).
 
 ## Circular mesh pattern Generator
 
