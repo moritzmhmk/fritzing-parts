@@ -5,7 +5,7 @@
   baseProfile="tiny"
   width="0.71in"
   height="0.31in"
-  viewBox="-105 -5 710 310"
+  viewBox="0 0 710 310"
 >
   <g
     id="schematic"
@@ -14,6 +14,7 @@
     stroke-width="10"
     stroke-linecap="round"
     font-family="DroidSans"
+    transform="translate(105, 5)"
   >
     <rect x="0" y="0" width="500" height="300" stroke="#000" />
     <text x="250" y="170" font-size="59" fill="#000" text-anchor="middle">
