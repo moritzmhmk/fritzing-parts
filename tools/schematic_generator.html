@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Schematic Generator</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+      Babel.registerPreset("my-preset", {
+        presets: [
+          [Babel.availablePresets["es2017"], { modules: false }],
+          [Babel.availablePresets["react"]],
+        ],
+        plugins: [[Babel.availablePlugins["transform-modules-umd"]]],
+      });
+    </script>
+    <style type="text/css">
+      svg {
+        zoom: 5;
+        border: 1px solid hsl(5, 73%, 49%);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" />
+    <script type="text/babel" data-presets="my-preset">
+      const { useState, useCallback } = React;
+
+      const App = () => {
+        const [svgString, setSvgString] = useState("");
+        const svgUpdate = useCallback((svgNode) => {
+          if (!svgNode) {
+            return;
+          }
+          var xsltDoc = new DOMParser().parseFromString(
+            [
+              // describes how we want to modify the XML - indent everything
+              '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">',
+              '  <xsl:strip-space elements="*"/>',
+              '  <xsl:template match="para[content-style][not(text())]">', // change to just text() to strip space in text nodes
+              '    <xsl:value-of select="normalize-space(.)"/>',
+              "  </xsl:template>",
+              '  <xsl:template match="node()|@*">',
+              '    <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
+              "  </xsl:template>",
+              '  <xsl:output indent="yes"/>',
+              "</xsl:stylesheet>",
+            ].join("\n"),
+            "application/xml"
+          );
+          const xsltProcessor = new XSLTProcessor();
+          xsltProcessor.importStylesheet(xsltDoc);
+          const resultDoc = xsltProcessor.transformToDocument(svgNode);
+          const s = new XMLSerializer().serializeToString(resultDoc);
+          console.log(s);
+          setSvgString(
+            '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' + s
+          );
+        });
+        const [label, setLabel] = useState("Label");
+        const [width, setWidth] = useState(5);
+        const [height, setHeight] = useState(3);
+        const [pins, setPins] = useState([
+          { label: "VCC", side: "left", position: 1 },
+          { label: "GND", side: "left", position: 2 },
+        ]);
+
+        const pinInputNodes = pins.map(({ label, side, position }, i) => (
+          <div>
+            {i + 1}
+            <input
+              type="text"
+              value={label}
+              onChange={(e) =>
+                setPins((pins) => [
+                  ...pins.slice(0, i),
+                  { ...pins[i], label: e.target.value },
+                  ...pins.slice(i + 1),
+                ])
+              }
+            />
+            <select
+              value={side}
+              onChange={(e) =>
+                setPins((pins) => [
+                  ...pins.slice(0, i),
+                  { ...pins[i], side: e.target.value },
+                  ...pins.slice(i + 1),
+                ])
+              }
+            >
+              <option value="top">top</option>
+              <option value="left">left</option>
+              <option value="right">right</option>
+              <option value="bottom">bottom</option>
+              <option value="hidden">hidden</option>
+            </select>
+            <input
+              type="number"
+              value={position}
+              onChange={(e) =>
+                setPins((pins) => [
+                  ...pins.slice(0, i),
+                  { ...pins[i], position: Math.max(1, e.target.value) },
+                  ...pins.slice(i + 1),
+                ])
+              }
+            />
+          </div>
+        ));
+
+        const pinSVGNodes = pins.map(({ side, position, label }, i) => {
+          return (
+            <Pin
+              side={side}
+              position={position}
+              label={label}
+              number={i}
+              width={width}
+              height={height}
+            />
+          );
+        });
+
+        const margin = {
+          top: pins.find((pin) => pin.side === "top") ? 105 : 5,
+          left: pins.find((pin) => pin.side === "left") ? 105 : 5,
+          right: pins.find((pin) => pin.side === "right") ? 105 : 5,
+          bottom: pins.find((pin) => pin.side === "bottom") ? 105 : 5,
+        };
+
+        const viewBox = {
+          x: -margin.left,
+          y: -margin.top,
+          width: width * 100 + margin.left + margin.right,
+          height: height * 100 + margin.top + margin.bottom,
+        };
+
+        return (
+          <div>
+            <input
+              type="text"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+            />
+            <br />
+            Size:
+            <input
+              type="number"
+              value={width}
+              onChange={(e) => setWidth(Math.max(1, e.target.value))}
+            />
+            x
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(Math.max(1, e.target.value))}
+            />
+            <br />
+            {pinInputNodes}
+            <input
+              type="button"
+              value="+"
+              onClick={() =>
+                setPins((pins) => [
+                  ...pins,
+                  { side: "left", position: 2, label: "NEW" },
+                ])
+              }
+            />
+            <br />
+            <svg
+              ref={svgUpdate}
+              xmlns="http://www.w3.org/2000/svg"
+              version="1.2"
+              baseProfile="tiny"
+              width={`${viewBox.width / 1000}in`}
+              height={`${viewBox.height / 1000}in`}
+              viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
+            >
+              <g
+                id="schematic"
+                fill="none"
+                stroke="none"
+                strokeWidth="10"
+                strokeLinecap="round"
+                fontFamily="DroidSans"
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  width={width * 100}
+                  height={height * 100}
+                  stroke="#000"
+                />
+                <text
+                  x={(width * 100) / 2}
+                  y={(height * 100) / 2 + 20}
+                  fontSize="59"
+                  fill="#000"
+                  textAnchor="middle"
+                >
+                  {label}
+                </text>
+                {pinSVGNodes}
+              </g>
+            </svg>
+            <pre>{svgString}</pre>
+          </div>
+        );
+      };
+
+      const Pin = ({ side, position, label, number, width, height }) => {
+        if (side === "hidden") {
+          return (
+            <rect id={`connector${number}pin`} fill="none" stroke="none" />
+          );
+        }
+        let x, y, horizontal, invert;
+        if (side === "top") {
+          x = position;
+          y = 0;
+          horizontal = false;
+          invert = false;
+        }
+        if (side === "left") {
+          x = 0;
+          y = position;
+          horizontal = true;
+          invert = false;
+        }
+        if (side === "right") {
+          x = width;
+          y = position;
+          horizontal = true;
+          invert = true;
+        }
+        if (side === "bottom") {
+          x = position;
+          y = height;
+          horizontal = false;
+          invert = true;
+        }
+        return (
+          <g transform={`translate(${x * 100},${y * 100})`}>
+            <path
+              d={`m0,0 ${horizontal ? "h" : "v"}${invert ? 100 : -100}`}
+              id={`connector${number}pin`}
+              stroke="#555"
+            />
+            <rect
+              x="-1"
+              y="-1"
+              width="2"
+              height="2"
+              id={`connector${number}terminal`}
+              fill="none"
+              stroke="none"
+            />
+            <text
+              transform={horizontal ? "" : "rotate(-90)"}
+              x={!horizontal ^ invert ? -20 : 20}
+              y="15"
+              fontSize="49"
+              fill="#555"
+              textAnchor={!horizontal ^ invert ? "end" : "start"}
+            >
+              {label}
+            </text>
+            <text
+              transform={horizontal ? "" : "rotate(-90)"}
+              x={!horizontal ^ invert ? 50 : -50}
+              y="-15"
+              fontSize="35"
+              fill="#555"
+              textAnchor="middle"
+            >
+              {number + 1}
+            </text>
+          </g>
+        );
+      };
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
