@@ -22,7 +22,7 @@
     <g transform="translate(0,100)">
       <path d="m0,0 h-100" id="connector0pin" stroke="#555" />
       <rect
-        x="-1"
+        x="-101"
         y="-1"
         width="2"
         height="2"
@@ -54,7 +54,7 @@
     <g transform="translate(500,100)">
       <path d="m0,0 h100" id="connector1pin" stroke="#555" />
       <rect
-        x="-1"
+        x="99"
         y="-1"
         width="2"
         height="2"
@@ -86,7 +86,7 @@
     <g transform="translate(500,200)">
       <path d="m0,0 h100" id="connector2pin" stroke="#555" />
       <rect
-        x="-1"
+        x="99"
         y="-1"
         width="2"
         height="2"
@@ -118,7 +118,7 @@
     <g transform="translate(0,200)">
       <path d="m0,0 h-100" id="connector3pin" stroke="#555" />
       <rect
-        x="-1"
+        x="-101"
         y="-1"
         width="2"
         height="2"
