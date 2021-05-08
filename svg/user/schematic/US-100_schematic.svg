@@ -20,23 +20,55 @@
       US-100
     </text>
     <g transform="translate(0,200)">
-      <path d="m0,0 h1" id="connector0terminal" stroke="#555" />
       <path d="m0,0 h100" id="connector0pin" stroke="#555" />
+      <rect
+        x="-1"
+        y="-1"
+        width="2"
+        height="2"
+        id="connector0terminal"
+        fill="none"
+        stroke="none"
+      />
       <text x="120" y="15" font-size="49" fill="#555">VCC</text>
     </g>
     <g transform="translate(700,200)" text-anchor="end">
-      <path d="m0,0 h-1" id="connector1terminal" stroke="#555" />
       <path d="m0,0 h-100" id="connector1pin" stroke="#555" />
+      <rect
+        x="-1"
+        y="-1"
+        width="2"
+        height="2"
+        id="connector1terminal"
+        fill="none"
+        stroke="none"
+      />
       <text x="-120" y="15" font-size="49" fill="#555">Trig/Tx</text>
     </g>
     <g transform="translate(700,300)" text-anchor="end">
-      <path d="m0,0 h-1" id="connector2terminal" stroke="#555" />
       <path d="m0,0 h-100" id="connector2pin" stroke="#555" />
+      <rect
+        x="-1"
+        y="-1"
+        width="2"
+        height="2"
+        id="connector2terminal"
+        fill="none"
+        stroke="none"
+      />
       <text x="-120" y="15" font-size="49" fill="#555">Echo/Rx</text>
     </g>
     <g transform="translate(0,300)">
-      <path d="m0,0 h1" id="connector3terminal" stroke="#555" />
       <path d="m0,0 h100" id="connector3pin" stroke="#555" />
+      <rect
+        x="-1"
+        y="-1"
+        width="2"
+        height="2"
+        id="connector3terminal"
+        fill="none"
+        stroke="none"
+      />
       <text x="120" y="15" font-size="49" fill="#555">GND</text>
     </g>
     <rect id="connector4pin" fill="none" stroke="none" />
