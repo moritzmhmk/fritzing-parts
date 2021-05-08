@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <title>Schematic Generator</title>
+    <style type="text/css">
+      svg {
+        zoom: 5;
+        border: 1px solid hsl(5, 73%, 49%);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" />
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"></script>
     <!-- Don't use this in production: -->
@@ -16,15 +25,6 @@
         plugins: [[Babel.availablePlugins["transform-modules-umd"]]],
       });
     </script>
-    <style type="text/css">
-      svg {
-        zoom: 5;
-        border: 1px solid hsl(5, 73%, 49%);
-      }
-    </style>
-  </head>
-  <body>
-    <div id="root" />
     <script type="text/babel" data-presets="my-preset">
       const { useState, useCallback } = React;
 
