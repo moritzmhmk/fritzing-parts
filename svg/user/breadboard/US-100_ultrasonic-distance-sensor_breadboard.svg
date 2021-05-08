@@ -5,9 +5,9 @@
   baseProfile="tiny"
   width="44mm"
   height="26mm"
-  viewBox="-22 0 44 26"
+  viewBox="0 0 44 26"
 >
-  <g id="breadboard">
+  <g id="breadboard" transform="translate(22,0)">
     <g display="none" class="def">
       <!-- hack to get around the limitation of "def" being unsupported for svg export in Fritzing -->
       <radialGradient id="membraneGradient">
